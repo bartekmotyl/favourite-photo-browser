@@ -28,3 +28,7 @@ So far I have only tested Windows, looking for feedback of testing it on other p
 # Release
 
 The current versdion is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
+
+# Contribution 
+
+If you would like to help to make the program better (and especailly if you have experience with C# programming), please contact me! 
