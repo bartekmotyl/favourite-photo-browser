@@ -25,7 +25,7 @@ Program is implemented in C# / .Net 6 with UI implemnted in [Avalonia](https://a
 
 So far I have only tested Windows, looking for feedback of testing it on other platforms. 
 
-Ah, and btw. - the code is (currently) very ugly ;-) I had completely no experience with Avalonia before starting this project, so probably experienced Avalonia developers would cry seeing  some my code...
+Ah, and btw. - the code is (currently) very ugly ;-) I had completely no experience with Avalonia before starting this project, so probably experienced Avalonia developers would cry reading this code...
 
 # Release
 
