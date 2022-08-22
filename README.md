@@ -6,7 +6,7 @@ A simple USB/network photo browser with support for caching thumbnails and favou
 # Goals
 
 The main reason why this program was created was to satify the following two needs: 
-- be able to browse photos located on [NAS](https://en.wikipedia.org/wiki/Network-attached_storage) (or other location that may be slow to read) from my laptop 
+- be able to *efficiently* browse photos located on [NAS](https://en.wikipedia.org/wiki/Network-attached_storage) (or other location that may be slow to read) from my laptop 
 - be able to mark favourite photos somehow, *without a need to save anything on the remote drive* (and definetelly without a need to update these photos e.g. to modify [EXIF](https://en.wikipedia.org/wiki/Exif) metadata)
 
 There are already some tools that make the first point possible, but I haven't found a single tool that would satisfy these both needs. 
