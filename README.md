@@ -31,7 +31,7 @@ The current versdion is an early alpha / MVP version, with basic UI but with bot
 
 At the moment there is no distribution packege available to download (should be available soon though!), you would need to compile the tool yourself. 
 On Windows the easiest way is to use [Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/) which can be downloaded for free from Microsoft.
-On Mac or Linux one may use [JetBrains Raider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
+On Mac or Linux one may use [JetBrains Rider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
 
 # Contribution 
 
