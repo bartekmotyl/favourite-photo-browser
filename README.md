@@ -27,11 +27,13 @@ So far I have only tested Windows, looking for feedback of testing it on other p
 
 # Release
 
-The current versdion is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
+The current version is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
 
 At the moment there is no distribution packege available to download (should be available soon though!), you would need to compile the tool yourself. 
 On Windows the easiest way is to use [Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/) which can be downloaded for free from Microsoft.
 On Mac or Linux one may use [JetBrains Rider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
+
+Ah, and btw. - the code is ugly ;-) I had completely no experience with Avalonia before starting this project, so probably experienced Avalonia developers would cry seeing  some my code...
 
 # Future ideas
 - better UI
