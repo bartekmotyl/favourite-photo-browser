@@ -33,6 +33,17 @@ At the moment there is no distribution packege available to download (should be 
 On Windows the easiest way is to use [Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/) which can be downloaded for free from Microsoft.
 On Mac or Linux one may use [JetBrains Rider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
 
+# Future ideas
+- better UI
+- quick zoom 
+- improved scrolling of thumbnails list 
+- change order of files on the list (currently by file date) - name, file date, date taken, ascending/descending, maybe even shuffle 
+- pre-caching of images in selected folders (to make browsing even more efficient later)
+- selecting folder from folder tree 
+- toggle showing only favourite images (in currernt folder) 
+- more export options (e.g. copy favourite images to a target folder) 
+- ... more ideas welcome 
+
 # Contribution 
 
 If you would like to help to make the program better (and especailly if you have experience with C# programming), please contact me! 
