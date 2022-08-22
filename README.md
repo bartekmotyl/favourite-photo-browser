@@ -29,7 +29,7 @@ So far I have only tested Windows, looking for feedback of testing it on other p
 
 The current versdion is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
 
-At the moment there is no distribution packege available to download (should available soon though!), you would need to compile the tool yourself. 
+At the moment there is no distribution packege available to download (should be available soon though!), you would need to compile the tool yourself. 
 On Windows the easiest way is to use [Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/) which can be downloaded for free from Microsoft.
 On Mac or Linux one may use [JetBrains Raider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
 
