@@ -32,10 +32,21 @@ Ah, and btw. - the code is (currently) very ugly ;-) I had completely no experie
 The current version is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
 
 At the moment there is no distribution packege available to download (should be available soon though!), you would need to compile the tool yourself. 
+
+## Windows 
+
 On Windows the easiest way is to use [Visual Studio 2022 Community Edition](https://visualstudio.microsoft.com/vs/community/) which can be downloaded for free from Microsoft.
-On Mac or Linux one may use [JetBrains Rider](https://www.jetbrains.com/rider/) (paid software) or compile using command line tools.    
 
+## Mac / Linux 
+On Mac or Linux one may use [JetBrains Rider](https://www.jetbrains.com/rider/) (paid software). Please note that on Mac one may need to install the `mono-libgdiplus` package (`brew install mono-libgdiplus`)
 
+## Command line build 
+
+```
+cd "sources/Favourite Photo Browser"
+dontnet build 
+./bin/Debug/net6.0/Favourite\ Photo\ Browser
+```
 
 # Future ideas
 - better UI
