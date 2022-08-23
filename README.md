@@ -16,7 +16,7 @@ There are already some tools that make the first point possible, but I haven't f
 This program uses a local database (`photos.db`), located in root program directory) to store thumbnails of browsed photos (to improve browsing experience next time you visit the same folder). When browsing, photo can be marked as favourite (use `F` key) and this information is stored in local database along with the thumbnail. 
 Finally, it is possible to export (copy to clipboard) paths of all photos marked as favourite in currently opened folder.     
 
-# Implemenntation 
+# Implementation 
 
 Program is implemented in C# / .Net 6 with UI implemnted in [Avalonia](https://avaloniaui.net/). This means it should work on many platforms, including: 
 - Windows 
