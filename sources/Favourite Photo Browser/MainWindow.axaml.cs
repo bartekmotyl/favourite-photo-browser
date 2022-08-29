@@ -111,6 +111,23 @@ namespace Favourite_Photo_Browser
             thumbnailsItemRepeater.Items = folderItems;
             zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
+            treeDataGridFolders.Source = new FolderTreeModel(
+                FolderTreeNode.GetDrivesRootDirectories().Select(di => new FolderTreeNode(di))).Source;
+        }
+
+        private void TreeDataGridFolders_DoubleTapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            var node = (e.Source as Control)?.DataContext as FolderTreeNode;
+            if (node != null)
+            {
+                this.currentFolder = node.Path;
+                thumbnailsScrollViewer.Offset = Avalonia.Vector.Zero;
+
+                Task.Run(async () =>
+                {
+                    await LoadFilesInFolder();
+                });
+            }
         }
 
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
@@ -195,6 +212,8 @@ namespace Favourite_Photo_Browser
                 Title = "Open Folder Dialog",
             };
             var path = await openFolderDialog.ShowAsync(this);
+            if (path == null)
+                return;
             this.currentFolder = path;
             thumbnailsScrollViewer.Offset = Avalonia.Vector.Zero;
 

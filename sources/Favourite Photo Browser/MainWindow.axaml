@@ -39,11 +39,17 @@
       </ScrollViewer>
     </Border>
     <Border Background="LemonChiffon" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Left">
-      <StackPanel Spacing="5" Orientation="Vertical">
-        <Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button>
-        <Button Name="toggleFavourite" Click="FavouriteToggle_Click" HorizontalAlignment="Center">Toggle fav</Button>
-        <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" HorizontalAlignment="Center">Copy favs paths</Button>
-      </StackPanel>
+      <DockPanel LastChildFill="True">
+        <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
+          <Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button>
+          <Button Name="toggleFavourite" Click="FavouriteToggle_Click" HorizontalAlignment="Center">Toggle fav</Button>
+          <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" HorizontalAlignment="Center">Copy favs paths</Button>
+        </StackPanel>
+        <TreeDataGrid 
+          Name="treeDataGridFolders" 
+          DoubleTapped="TreeDataGridFolders_DoubleTapped" 
+          Width="200" MaxWidth="200"/>
+      </DockPanel>
     </Border>
     <Border Background="White" BorderBrush="Black" BorderThickness="0" Padding="5">
       <Grid>
