@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using System;
 
 namespace Favourite_Photo_Browser
@@ -18,6 +20,8 @@ namespace Favourite_Photo_Browser
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToTrace();
+                .LogToTrace()
+                .WithIcons(container => container
+                    .Register<MaterialDesignIconProvider>());
     }
 }

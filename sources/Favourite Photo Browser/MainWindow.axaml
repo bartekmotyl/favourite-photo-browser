@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:paz="using:Avalonia.Controls.PanAndZoom"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
         Icon="/Assets/favourite-photo-browser-icon.png"
@@ -49,7 +50,7 @@
       </Border>
       <Border DockPanel.Dock="Left" Background="#2E445B" Margin="5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
         <TreeDataGrid
-          
+          Cursor="Hand"
           VerticalAlignment="Stretch"
           Name="treeDataGridFolders"
           DoubleTapped="TreeDataGridFolders_DoubleTapped"
@@ -66,11 +67,25 @@
           
         </TreeDataGrid>
       </Border>
-      <Border DockPanel.Dock="Right">
+      <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
           <!--Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button-->
-          <Button Name="toggleFavourite" Click="FavouriteToggle_Click" HorizontalAlignment="Center">Toggle fav</Button>
-          <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" HorizontalAlignment="Center">Copy favs paths</Button>
+          <Button Name="toggleFavourite" Click="FavouriteToggle_Click" Background="Transparent"
+                  Foreground="#DFE3E6"
+                  HorizontalAlignment="Center">
+              <StackPanel>
+                <i:Icon Value="mdi-heart"/>
+                <TextBlock Text="Toogle"/>
+              </StackPanel>
+          </Button>
+          <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" Background="Transparent"
+        Foreground="#DFE3E6"
+        HorizontalAlignment="Center">
+            <StackPanel>
+              <i:Icon Value="mdi-content-copy"/>
+              <TextBlock Text="Copy paths"/>
+            </StackPanel>
+          </Button>
         </StackPanel>
       </Border>
       <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
