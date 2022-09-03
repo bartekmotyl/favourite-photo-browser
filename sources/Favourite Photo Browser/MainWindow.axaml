@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:paz="using:Avalonia.Controls.PanAndZoom"
+        xmlns:paz="clr-namespace:Avalonia.Controls.PanAndZoom;assembly=Avalonia.Controls.PanAndZoom"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
@@ -64,23 +64,22 @@
               <Setter Property="Background" Value="Red"/>
             </Style>
           </TreeDataGrid.Styles>
-          
         </TreeDataGrid>
       </Border>
       <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
           <!--Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button-->
           <Button Name="toggleFavourite" Click="FavouriteToggle_Click" Background="Transparent"
-                  Foreground="#DFE3E6"
-                  HorizontalAlignment="Center">
+                Foreground="#DFE3E6"
+                HorizontalAlignment="Center">
               <StackPanel>
                 <i:Icon Value="mdi-heart"/>
                 <TextBlock Text="Toogle"/>
               </StackPanel>
           </Button>
           <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" Background="Transparent"
-        Foreground="#DFE3E6"
-        HorizontalAlignment="Center">
+              Foreground="#DFE3E6"
+              HorizontalAlignment="Center">
             <StackPanel>
               <i:Icon Value="mdi-content-copy"/>
               <TextBlock Text="Copy paths"/>
