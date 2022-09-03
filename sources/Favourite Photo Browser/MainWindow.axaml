@@ -49,22 +49,27 @@
         </ScrollViewer>
       </Border>
       <Border DockPanel.Dock="Left" Background="#2E445B" Margin="5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
-        <TreeDataGrid
-          Cursor="Hand"
-          VerticalAlignment="Stretch"
-          Name="treeDataGridFolders"
-          DoubleTapped="TreeDataGridFolders_DoubleTapped"
-          Width="200" MaxWidth="200" ShowColumnHeaders="False">
+        <DockPanel>
+          <TextBlock Text="Double click to load" Margin="0,0,0,5" Foreground="#AEEE98" DockPanel.Dock="Top"/>
+          <TreeDataGrid
+            DockPanel.Dock="Top"
+            Cursor="Hand"
+            Name="treeDataGridFolders"
+            DoubleTapped="TreeDataGridFolders_DoubleTapped"
+            Width="200" MaxWidth="200" 
+            ShowColumnHeaders="False"
+            >
 
-          <TreeDataGrid.Styles>
-            <Style Selector="TreeDataGrid TreeDataGridRow:pointerover">
-              <Setter Property="Background" Value="#455A6D"/>
-            </Style>
-            <Style Selector="TreeDataGrid TreeDataGridRow:selected">
-              <Setter Property="Background" Value="Red"/>
-            </Style>
-          </TreeDataGrid.Styles>
-        </TreeDataGrid>
+            <TreeDataGrid.Styles>
+              <Style Selector="TreeDataGrid TreeDataGridRow:pointerover">
+                <Setter Property="Background" Value="#455A6D"/>
+              </Style>
+              <Style Selector="TreeDataGrid TreeDataGridRow:selected">
+                <Setter Property="Background" Value="Red"/>
+              </Style>
+            </TreeDataGrid.Styles>
+          </TreeDataGrid>
+        </DockPanel>
       </Border>
       <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
