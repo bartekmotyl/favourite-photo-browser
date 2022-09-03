@@ -90,12 +90,12 @@
       </Border>
       <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
         <Grid>
-          <!--paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
+          <paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
                                       Background="Transparent" ClipToBounds="True" Focusable="True"
                                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                          MinZoomX="1.0" MinZoomY="1.0" -->
+                          MinZoomX="1.0" MinZoomY="1.0">
             <Image Name="targetImage"/>
-          <!--/paz:ZoomBorder-->
+          </paz:ZoomBorder>
           <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
         </Grid>
       </Border>

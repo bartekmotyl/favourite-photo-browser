@@ -111,7 +111,7 @@ namespace Favourite_Photo_Browser
             //this.openFolderButton.Click += OpenFolderButton_Click;
             
             thumbnailsItemRepeater.Items = folderItems;
-            //zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
+            zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
             treeDataGridFolders.Source = new FolderTreeModel(
                 FolderTreeNode.GetDrivesRootDirectories().Select(di => new FolderTreeNode(di))).Source;
@@ -149,7 +149,7 @@ namespace Favourite_Photo_Browser
             switch (e.Key)
             {
                 case Key.R:
-                    //zoomBorderImage.ResetMatrix();
+                    zoomBorderImage.ResetMatrix();
                     break;
                 case Key.F:
                     ToggleFavourite();
@@ -353,7 +353,7 @@ namespace Favourite_Photo_Browser
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        //zoomBorderImage.ResetMatrix();
+                        zoomBorderImage.ResetMatrix();
                         targetImage.Source = bitmap;
                         iconCurrentImageFavourite.DataContext = currentFolderItem;
                     });
