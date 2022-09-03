@@ -6,62 +6,85 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
         Icon="/Assets/favourite-photo-browser-icon.png"
-        Title="Favourite Photo Browser">
+        Title="Favourite Photo Browser"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="#1D2025"
+        FontFamily="/Assets/Lato-Regular.ttf"
+        >
 
-  <DockPanel LastChildFill="True">
-    <Border Background="SkyBlue" BorderBrush="Black" BorderThickness="0" Padding="3" DockPanel.Dock="Top" MinHeight="25">
-      <TextBlock Name="textCurrentFolder" Foreground="Black" VerticalAlignment="Center"></TextBlock>
-    </Border>
-    <Border Height="180" Background="LemonChiffon" BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Bottom">
-      <ScrollViewer Name="thumbnailsScrollViewer" Background="Transparent" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-        <ItemsRepeater Background="Transparent" Name="thumbnailsItemRepeater" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
-          <ItemsRepeater.ItemTemplate>
-            <DataTemplate>
-              <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >
-                <Button Click="OnThumbnailImageClick">
-                  <StackPanel Spacing="5" Orientation="Vertical">
-                    <Grid>
-                      <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>
-                      <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding FavouriteIcon}"  Width="32" Height="32" />
-                    </Grid>
-                    <StackPanel Orientation="Horizontal">
-                      <TextBlock Text="{Binding Title}" Foreground="Black"></TextBlock>
-                      <!--TextBlock HorizontalAlignment="Right" Text="{Binding ImageId}" Foreground="Black"></TextBlock-->
+  <Panel>
+
+    <DockPanel LastChildFill="True">
+      <Border BorderBrush="Black" Background="#102A43" BorderThickness="0.5" Margin="5,0,5,5" Padding="5" CornerRadius="3" DockPanel.Dock="Bottom" MinHeight="25">
+        <StackPanel Spacing="3" Orientation="Horizontal">
+          <TextBlock Text="Current folder:" Foreground="#E2E0E1"></TextBlock>
+          <TextBlock Name="textCurrentFolderPath" Foreground="#E2E0E1"></TextBlock>
+        </StackPanel>
+      </Border>
+      <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
+        <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <ItemsRepeater Name="thumbnailsItemRepeater" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
+            <ItemsRepeater.ItemTemplate>
+              <DataTemplate>
+                <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >
+                  <Button Click="OnThumbnailImageClick">
+                    <StackPanel Spacing="5" Orientation="Vertical">
+                      <Grid>
+                        <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>
+                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding FavouriteIcon}"  Width="32" Height="32" />
+                      </Grid>
+                      <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Title}" Foreground="Black"></TextBlock>
+                      </StackPanel>
                     </StackPanel>
-                  </StackPanel>
-                </Button>
-              </Border>
-            </DataTemplate>
-          </ItemsRepeater.ItemTemplate>
-          <ItemsRepeater.Layout>
-            <StackLayout Orientation="Horizontal"/>
-          </ItemsRepeater.Layout>
-        </ItemsRepeater>
-      </ScrollViewer>
-    </Border>
-    <Border Background="LemonChiffon" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Left">
-      <DockPanel LastChildFill="True">
+                  </Button>
+                </Border>
+              </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+            <ItemsRepeater.Layout>
+              <StackLayout Orientation="Horizontal"/>
+            </ItemsRepeater.Layout>
+          </ItemsRepeater>
+        </ScrollViewer>
+      </Border>
+      <Border DockPanel.Dock="Left" Background="#2E445B" Margin="5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
+        <TreeDataGrid
+          
+          VerticalAlignment="Stretch"
+          Name="treeDataGridFolders"
+          DoubleTapped="TreeDataGridFolders_DoubleTapped"
+          Width="200" MaxWidth="200" ShowColumnHeaders="False">
+
+          <TreeDataGrid.Styles>
+            <Style Selector="TreeDataGrid TreeDataGridRow:pointerover">
+              <Setter Property="Background" Value="#455A6D"/>
+            </Style>
+            <Style Selector="TreeDataGrid TreeDataGridRow:selected">
+              <Setter Property="Background" Value="Red"/>
+            </Style>
+          </TreeDataGrid.Styles>
+          
+        </TreeDataGrid>
+      </Border>
+      <Border DockPanel.Dock="Right">
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
-          <Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button>
+          <!--Button Name="openFolderButton" HorizontalAlignment="Center">Open folder</Button-->
           <Button Name="toggleFavourite" Click="FavouriteToggle_Click" HorizontalAlignment="Center">Toggle fav</Button>
           <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" HorizontalAlignment="Center">Copy favs paths</Button>
         </StackPanel>
-        <TreeDataGrid 
-          Name="treeDataGridFolders" 
-          DoubleTapped="TreeDataGridFolders_DoubleTapped" 
-          Width="200" MaxWidth="200"/>
-      </DockPanel>
-    </Border>
-    <Border Background="White" BorderBrush="Black" BorderThickness="0" Padding="5">
-      <Grid>
-        <paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
-                                    Background="Transparent" ClipToBounds="True" Focusable="True"
-                                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                        MinZoomX="1.0" MinZoomY="1.0" >
-          <Image Name="targetImage"/>
-        </paz:ZoomBorder>
-        <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
-      </Grid>
-    </Border>
-  </DockPanel>
+      </Border>
+      <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
+        <Grid>
+          <!--paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
+                                      Background="Transparent" ClipToBounds="True" Focusable="True"
+                                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                          MinZoomX="1.0" MinZoomY="1.0" -->
+            <Image Name="targetImage"/>
+          <!--/paz:ZoomBorder-->
+          <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
+        </Grid>
+      </Border>
+    </DockPanel>
+  </Panel>
+
 </Window>

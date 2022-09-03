@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TextCopy;
 using Avalonia;
+using System.Reactive.Subjects;
 
 namespace Favourite_Photo_Browser
 {
@@ -95,6 +96,7 @@ namespace Favourite_Photo_Browser
         private ThumnailsLoadingJob? thumbnailsLoadingJob = null;
         private FolderItemInfo? currentFolderItem = null;
         private readonly AvaloniaList<FolderItemInfo>  folderItems = new();
+        private Subject<string> currentFolderPath = new Subject<string>();
 
         public MainWindow()
         {
@@ -106,13 +108,16 @@ namespace Favourite_Photo_Browser
             this.dbConnector = new DBConnector(@"photos.db");
             
             this.KeyDown += MainWindow_KeyDown;
-            this.openFolderButton.Click += OpenFolderButton_Click;
+            //this.openFolderButton.Click += OpenFolderButton_Click;
             
             thumbnailsItemRepeater.Items = folderItems;
-            zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
+            //zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
             treeDataGridFolders.Source = new FolderTreeModel(
                 FolderTreeNode.GetDrivesRootDirectories().Select(di => new FolderTreeNode(di))).Source;
+
+            textCurrentFolderPath.Bind(TextBlock.TextProperty, currentFolderPath);
+            currentFolderPath.OnNext("(not selected)");
         }
 
         private void TreeDataGridFolders_DoubleTapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -144,7 +149,7 @@ namespace Favourite_Photo_Browser
             switch (e.Key)
             {
                 case Key.R:
-                    zoomBorderImage.ResetMatrix();
+                    //zoomBorderImage.ResetMatrix();
                     break;
                 case Key.F:
                     ToggleFavourite();
@@ -238,7 +243,8 @@ namespace Favourite_Photo_Browser
             {
                 folderItems.Clear();
                 folderItems.AddRange(allFolderItems);
-                this.textCurrentFolder.Text = this.currentFolder;
+                currentFolderPath.OnNext(this.currentFolder ?? "");
+                //this.textCurrentFolder.Text = this.currentFolder;
             });
             this.thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
 
@@ -347,7 +353,7 @@ namespace Favourite_Photo_Browser
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        zoomBorderImage.ResetMatrix();
+                        //zoomBorderImage.ResetMatrix();
                         targetImage.Source = bitmap;
                         iconCurrentImageFavourite.DataContext = currentFolderItem;
                     });
