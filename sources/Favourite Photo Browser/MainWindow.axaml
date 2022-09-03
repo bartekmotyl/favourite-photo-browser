@@ -5,6 +5,7 @@
         xmlns:paz="using:Avalonia.Controls.PanAndZoom"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
+        Icon="/Assets/favourite-photo-browser-icon.png"
         Title="Favourite Photo Browser">
 
   <DockPanel LastChildFill="True">

@@ -227,7 +227,7 @@ namespace Favourite_Photo_Browser
         {
             
             var directory = new DirectoryInfo(this.currentFolder!);
-            var files = directory.GetFiles().OrderBy(f => f.Name.ToUpperInvariant()).ToList();
+            var files = directory.GetFiles().OrderBy(f => f.CreationTimeUtc).ToList();
             
 
             
