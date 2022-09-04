@@ -12,6 +12,8 @@
     <PackageProjectUrl>https://github.com/bartekmotyl/favourite-photo-browser</PackageProjectUrl>
     <PackageIcon>favourite-photo-browser-icon.png</PackageIcon>
     <PackageLicenseFile>MIT</PackageLicenseFile>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Version>$(VersionPrefix)</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
