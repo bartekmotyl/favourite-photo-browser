@@ -7,6 +7,11 @@
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationIcon>Assets\favourite-photo-browser-icon.ico</ApplicationIcon>
+    <StartupObject>Favourite_Photo_Browser.Program</StartupObject>
+    <Authors>Bartek Motyl</Authors>
+    <PackageProjectUrl>https://github.com/bartekmotyl/favourite-photo-browser</PackageProjectUrl>
+    <PackageIcon>favourite-photo-browser-icon.png</PackageIcon>
+    <PackageLicenseFile>MIT</PackageLicenseFile>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
@@ -52,5 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\favourite-photo-browser-icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
