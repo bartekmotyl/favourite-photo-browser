@@ -29,9 +29,11 @@ Ah, and btw. - the code is (currently) very ugly ;-) I had completely no experie
 
 # Release
 
-The current version is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.    
+Current version is an early alpha / MVP version, with basic UI but with both main features (browsing and marking favourites) already working.  
+Binaries can be downloaded for Windows only - see [releases page](https://github.com/bartekmotyl/favourite-photo-browser/releases). 
+Mac OS/ Linux packages coming soon.  
 
-At the moment there is no distribution packege available to download (should be available soon though!), you would need to compile the tool yourself. 
+# Building 
 
 ## Windows 
 
