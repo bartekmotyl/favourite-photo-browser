@@ -8,7 +8,6 @@
         x:Class="Favourite_Photo_Browser.MainWindow"
         Icon="/Assets/favourite-photo-browser-icon.png"
         Title="Favourite Photo Browser"
-        TransparencyLevelHint="AcrylicBlur"
         Background="#1D2025"
         FontFamily="/Assets/Lato-Regular.ttf"
         >
