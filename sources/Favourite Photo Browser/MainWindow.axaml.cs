@@ -96,7 +96,7 @@ namespace Favourite_Photo_Browser
         private ThumnailsLoadingJob? thumbnailsLoadingJob = null;
         private FolderItemInfo? currentFolderItem = null;
         private readonly AvaloniaList<FolderItemInfo>  folderItems = new();
-        private Subject<string> currentFolderPath = new Subject<string>();
+        private readonly Subject<string> currentFolderPath = new();
 
         public MainWindow()
         {
@@ -108,31 +108,12 @@ namespace Favourite_Photo_Browser
             this.dbConnector = new DBConnector(@"photos.db");
             
             this.KeyDown += MainWindow_KeyDown;
-            //this.openFolderButton.Click += OpenFolderButton_Click;
             
             thumbnailsItemRepeater.Items = folderItems;
             zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
-            treeDataGridFolders.Source = new FolderTreeModel(
-                FolderTreeNode.GetDrivesRootDirectories().Select(di => new FolderTreeNode(di))).Source;
-
             textCurrentFolderPath.Bind(TextBlock.TextProperty, currentFolderPath);
             currentFolderPath.OnNext("(not selected)");
-        }
-
-        private void TreeDataGridFolders_DoubleTapped(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            var node = (e.Source as Control)?.DataContext as FolderTreeNode;
-            if (node != null)
-            {
-                this.currentFolder = node.Path;
-                thumbnailsScrollViewer.Offset = Avalonia.Vector.Zero;
-
-                Task.Run(async () =>
-                {
-                    await LoadFilesInFolder();
-                });
-            }
         }
 
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
