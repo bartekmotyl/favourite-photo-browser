@@ -31,7 +31,7 @@
                     <StackPanel Spacing="5" Orientation="Vertical">
                       <Grid>
                         <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>
-                        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="{Binding FavouriteIcon}"  Width="32" Height="32" />
+                        <Image HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding FavouriteIcon}"  Width="32" Height="32" />
                       </Grid>
                       <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Title}" Foreground="Black"></TextBlock>
@@ -47,7 +47,7 @@
           </ItemsRepeater>
         </ScrollViewer>
       </Border>
-      <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">
+      <Border DockPanel.Dock="Left"  Background="#102A43" Margin="0,5,5,5">
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
           <Button Name="openFolderButton" Click="OpenFolderButton_Click" Background="Transparent"
                 Foreground="#DFE3E6"
@@ -57,14 +57,6 @@
               <TextBlock Text="Open folder"/>
             </StackPanel>
           </Button>          
-          <Button Name="toggleFavourite" Click="FavouriteToggle_Click" Background="Transparent"
-                Foreground="#DFE3E6"
-                HorizontalAlignment="Center">
-              <StackPanel>
-                <i:Icon Value="mdi-heart"/>
-                <TextBlock Text="Toggle"/>
-              </StackPanel>
-          </Button>
           <Button Name="copyPathsOfFavourites" Click="CopyFavouritesPaths_Click" Background="Transparent"
               Foreground="#DFE3E6"
               HorizontalAlignment="Center">
@@ -75,6 +67,18 @@
           </Button>
         </StackPanel>
       </Border>
+      <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">
+        <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
+          <Button Name="toggleFavourite" Click="FavouriteToggle_Click" Background="Transparent"
+                Foreground="#DFE3E6"
+                HorizontalAlignment="Center">
+            <StackPanel>
+              <i:Icon Value="mdi-heart"/>
+              <TextBlock Text="Toggle"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Border>      
       <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
         <Grid>
           <paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
@@ -83,7 +87,7 @@
                           MinZoomX="1.0" MinZoomY="1.0">
             <Image Name="targetImage"/>
           </paz:ZoomBorder>
-          <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="32" Height="32" />
+          <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
         </Grid>
       </Border>
     </DockPanel>
