@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using TextCopy;
 using Avalonia;
 using System.Reactive.Subjects;
+using Avalonia.Platform.Storage;
 
 namespace Favourite_Photo_Browser
 {
@@ -192,15 +193,22 @@ namespace Favourite_Photo_Browser
         }
         private async void OpenFolder()
         {
-   
-            var openFolderDialog = new OpenFolderDialog()
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
             {
-                Title = "Open Folder Dialog",
-            };
-            var path = await openFolderDialog.ShowAsync(this);
-            if (path == null)
+                Title = "Select folder",
+                AllowMultiple = false,
+            });
+
+            if (folders.Count == 0)
                 return;
-            this.currentFolder = path;
+
+            var folder = folders.First() as IStorageFolder;
+            Uri? folderUri;
+            if (!folder.TryGetUri(out folderUri))
+                return;
+
+            this.currentFolder = folderUri.AbsolutePath;
+
             thumbnailsScrollViewer.Offset = Avalonia.Vector.Zero;
 
             await Task.Run(async () =>
