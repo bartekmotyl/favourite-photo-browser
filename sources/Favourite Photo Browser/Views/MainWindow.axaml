@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Favourite_Photo_Browser.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:paz="clr-namespace:Avalonia.Controls.PanAndZoom;assembly=Avalonia.Controls.PanAndZoom"
@@ -11,7 +12,10 @@
         Background="#1D2025"
         FontFamily="/Assets/Lato-Regular.ttf"
         >
-
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+  
   <Panel>
 
     <DockPanel LastChildFill="True">
@@ -23,7 +27,7 @@
       </Border>
       <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
         <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-          <ItemsRepeater Name="thumbnailsItemRepeater" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
+          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding FolderItems}" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
                 <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >

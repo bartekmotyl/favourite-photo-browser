@@ -3,6 +3,5 @@
              x:Class="Favourite_Photo_Browser.App">
   <Application.Styles>
     <FluentTheme Mode="Dark" />
-
   </Application.Styles>
 </Application>

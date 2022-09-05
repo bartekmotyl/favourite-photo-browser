@@ -2,11 +2,9 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using MessageBox.Avalonia;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,86 +16,20 @@ using TextCopy;
 using Avalonia;
 using System.Reactive.Subjects;
 using Avalonia.Platform.Storage;
+using Favourite_Photo_Browser.ViewModels;
 
 namespace Favourite_Photo_Browser
 {
-    internal class FolderItemInfo : ReactiveObject
-    {
-        private readonly string[] acceptedFileExtensions = new string[] { "jpg", "png", "tiff", "jpeg" /*, "arw"*/ };
-
-        public FolderItemInfo(string path, string fileName)
-        {
-            this.path = path;
-            this.fileName = fileName;
-            this.title = fileName;
-            this.ignored = acceptedFileExtensions.All(ext => !path.ToLower().EndsWith(ext));
-            if (ignored)
-            {
-                this.thumbnailImage = StaticImages.UnknownFormat;
-                this.favourite = 0;
-                this.favouriteIcon = null;
-            }
-        }
-
-        private string path;
-        private readonly string fileName;
-        private string title;
-        private bool isLoaded;
-        private Bitmap thumbnailImage = StaticImages.PhotoLoadingImage;
-        private Bitmap? favouriteIcon = StaticImages.IconFavouriteUnknown;
-        private bool isActive;
-        public IBrush borderBrush = Brushes.Transparent;
-        private int? imageId;
-        private int? favourite;
-        private readonly bool ignored = false;
-
-
-        public string Path { get => path; set => this.RaiseAndSetIfChanged(ref path, value); }
-        public string Title { get => title; set => this.RaiseAndSetIfChanged(ref title, value); }
-        public bool IsLoaded { get => isLoaded; set => this.RaiseAndSetIfChanged(ref isLoaded, value); }
-        public Bitmap ThumbnailImage { get => thumbnailImage; set => this.RaiseAndSetIfChanged(ref thumbnailImage, value); }
-        public Bitmap? FavouriteIcon { get => favouriteIcon; set => this.RaiseAndSetIfChanged(ref favouriteIcon, value); }
-        public IBrush BorderBrush { get => borderBrush; set => this.RaiseAndSetIfChanged(ref borderBrush, value); }
-        public int? ImageId { get => imageId; set => this.RaiseAndSetIfChanged(ref imageId, value); }
-        public bool Ignored => ignored;
-        public string FileName => fileName;
-
-        public bool IsActive {
-            get => isActive;
-            set {
-                this.RaiseAndSetIfChanged(ref isActive, value);
-                BorderBrush = value ? Brushes.Tomato : Brushes.Transparent;
-            }
-        }
-
-        
-
-        public int? Favourite
-        {
-            get => favourite;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref favourite, value);
-                if (value == null)
-                {
-                    FavouriteIcon = StaticImages.IconFavouriteUnknown;
-                }
-                else
-                {
-                    FavouriteIcon = value == 0 ? null : StaticImages.IconFavouriteOn;
-                }
-            }
-        }
-    }
 
     public partial class MainWindow : Window
     {
         private string? currentFolder = null;
         private readonly DBConnector dbConnector;
         private ThumnailsLoadingJob? thumbnailsLoadingJob = null;
-        private FolderItemInfo? currentFolderItem = null;
-        private readonly AvaloniaList<FolderItemInfo>  folderItems = new();
+        private FolderItemViewModel? currentFolderItem = null;
+
         private readonly Subject<string> currentFolderPath = new();
+        private MainWindowViewModel? ViewModel => (MainWindowViewModel?)DataContext;
 
         public MainWindow()
         {
@@ -106,7 +38,6 @@ namespace Favourite_Photo_Browser
             
             this.KeyDown += MainWindow_KeyDown;
             
-            thumbnailsItemRepeater.Items = folderItems;
             zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
             textCurrentFolderPath.Bind(TextBlock.TextProperty, currentFolderPath);
@@ -147,7 +78,7 @@ namespace Favourite_Photo_Browser
 
         private void CopyFavouritesPaths_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            var paths = folderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
+            var paths = ViewModel!.FolderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
             if (paths == null)
                 return;
             var text = string.Join(Environment.NewLine, paths);
@@ -157,15 +88,15 @@ namespace Favourite_Photo_Browser
 
         private void OnThumbnailImageClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            var thumbnailData = ((e.Source as Button)!.DataContext as FolderItemInfo)!;
+            var thumbnailData = ((e.Source as Button)!.DataContext as FolderItemViewModel)!;
 
             if (thumbnailData.Ignored)
                 return;
 
             if (currentFolderItem != null)
                 currentFolderItem.IsActive = false;
-
-            var index = folderItems.IndexOf(thumbnailData);
+            
+            var index = ViewModel!.FolderItems.IndexOf(thumbnailData);
             SetCurrentImage(index);
           
         }
@@ -221,13 +152,13 @@ namespace Favourite_Photo_Browser
             
 
             
-            var allFolderItems = files.Select(fileInfo => new FolderItemInfo(fileInfo.FullName, fileInfo.Name)).ToList();
+            var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(fileInfo.FullName, fileInfo.Name)).ToList();
 
 
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
-                folderItems.Clear();
-                folderItems.AddRange(allFolderItems);
+                ViewModel!.FolderItems.Clear();
+                ViewModel!.FolderItems.AddRange(allFolderItems);
                 currentFolderPath.OnNext(this.currentFolder ?? "");
                 //this.textCurrentFolder.Text = this.currentFolder;
             });
@@ -238,6 +169,13 @@ namespace Favourite_Photo_Browser
             var fileNamesToProcess = allFolderItems.Where(fi => !fi.Ignored).Select(fi => fi.FileName).ToArray();
             this.thumbnailsLoadingJob = new ThumnailsLoadingJob(this.currentFolder!, fileNamesToProcess);
 
+            AvaloniaList<FolderItemViewModel>? folderItems = null;
+
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                folderItems = ViewModel!.FolderItems;
+            });
+
 
             var readThumnailsTask = dbConnector.ReadThumbnails(thumbnailsLoadingJob);
 
@@ -247,7 +185,8 @@ namespace Favourite_Photo_Browser
                 {
                     if (thumbnailsLoadingJob.ProcessingProgress.TryDequeue(out var thumbnailLoadingStatus))
                     {
-                        var thumbnail = folderItems.FirstOrDefault(t => t.Title == thumbnailLoadingStatus.FileName);
+
+                        var thumbnail = folderItems!.FirstOrDefault(t => t.Title == thumbnailLoadingStatus.FileName);
                         if (thumbnail != null)
                         {
                             var data = thumbnailLoadingStatus.LoadedThumbnail!.Data;
@@ -282,18 +221,18 @@ namespace Favourite_Photo_Browser
         {
             if (currentFolderItem == null)
                 return;
-            var index = folderItems.IndexOf(currentFolderItem);
+            var index = ViewModel!.FolderItems.IndexOf(currentFolderItem);
             var newIndex = index + offset;
             int direction = offset < 0 ? -1 : 1;
 
             while (true)
             {
-                if (newIndex < 0 || newIndex >= folderItems.Count)
+                if (newIndex < 0 || newIndex >= ViewModel!.FolderItems.Count)
                 {
                     newIndex = index;
                     break;
                 }
-                if (!folderItems[newIndex].Ignored)
+                if (!ViewModel!.FolderItems[newIndex].Ignored)
                     break;
                 newIndex += direction;
             }
@@ -324,7 +263,7 @@ namespace Favourite_Photo_Browser
             if (currentFolderItem != null)
                 currentFolderItem.IsActive = false;
 
-            currentFolderItem = folderItems[index];
+            currentFolderItem = ViewModel!.FolderItems[index];
             currentFolderItem.IsActive = true;
 
             Task.Run(async () =>

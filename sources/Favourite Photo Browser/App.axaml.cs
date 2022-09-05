@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Favourite_Photo_Browser.ViewModels;
 
 namespace Favourite_Photo_Browser
 {
@@ -15,7 +16,10 @@ namespace Favourite_Photo_Browser
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
+                desktop.MainWindow = new MainWindow()
+                {
+                    DataContext = new MainWindowViewModel(),
+                };
             }
 
             base.OnFrameworkInitializationCompleted();
