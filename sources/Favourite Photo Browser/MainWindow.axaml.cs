@@ -102,10 +102,6 @@ namespace Favourite_Photo_Browser
         public MainWindow()
         {
             InitializeComponent();
-
-#if DEBUG
-            this.AttachDevTools();
-#endif
             this.dbConnector = new DBConnector(@"photos.db");
             
             this.KeyDown += MainWindow_KeyDown;
