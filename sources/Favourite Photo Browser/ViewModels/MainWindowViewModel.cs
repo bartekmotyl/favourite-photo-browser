@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ReactiveUI;
 using System;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TextCopy;
 
 namespace Favourite_Photo_Browser.ViewModels
 {
@@ -19,11 +21,13 @@ namespace Favourite_Photo_Browser.ViewModels
         private readonly AvaloniaList<FolderItemViewModel> folderItems = new();
         private string currentFolderPath = "(not slected)";
         private FolderItemViewModel? currentFolderItem = null;
+        private Bitmap? targetImage = null;
 
         public AvaloniaList<FolderItemViewModel> FolderItems => folderItems;
         public string CurrentFolderPath { get => currentFolderPath; set => this.RaiseAndSetIfChanged(ref currentFolderPath, value); }
         public FolderItemViewModel? CurrentFolderItem { get => currentFolderItem; set => this.RaiseAndSetIfChanged(ref currentFolderItem, value); }
-
+        public Bitmap? TargetImage { get => targetImage; set => this.RaiseAndSetIfChanged(ref targetImage, value); }
+        public int? CurrentFolderItemIndex => CurrentFolderItem == null ? null : folderItems.IndexOf(CurrentFolderItem);
 
         public MainWindowViewModel()
         {
@@ -106,5 +110,91 @@ namespace Favourite_Photo_Browser.ViewModels
                 processLoadedImagesAsync();
         }
 
+
+        public async void OpenFolder(IStorageProvider storageProvider)
+        {
+            var folders = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
+            {
+                Title = "Select folder",
+                AllowMultiple = false,
+            });
+
+            if (folders.Count == 0)
+                return;
+
+            var folder = folders[0] as IStorageFolder;
+            if (!folder.TryGetUri(out Uri? folderUri))
+                return;
+
+            CurrentFolderPath = folderUri.AbsolutePath;
+
+            await Task.Run(async () =>
+            {
+                await LoadFilesInFolder(folderUri.AbsolutePath);
+            });
+        }
+
+        public void CopyFavouritePathsToClipboard()
+        {
+            var paths = FolderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
+            if (paths == null)
+                return;
+            var text = string.Join(Environment.NewLine, paths);
+            ClipboardService.SetText(text);
+        }
+
+
+        public void SetCurrentImage(int index)
+        {
+
+            if (CurrentFolderItem != null)
+                CurrentFolderItem.IsActive = false;
+
+            CurrentFolderItem = FolderItems[index];
+
+            CurrentFolderItem.IsActive = true;
+
+            //EnsureItemVisibleInScrollViewer(index);
+
+            Task.Run(async () =>
+            {
+
+                var pathToLoad = CurrentFolderItem.Path;
+                var bitmap = new Bitmap(pathToLoad); // this takes time, especially on network drive 
+                // the if is here to ignore loaded image if we already requested another one 
+                if (pathToLoad == CurrentFolderItem.Path)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        
+                        TargetImage = bitmap;
+                    });
+                }
+            });
+        }
+
+        public void NavigateToImage(int offset)
+        {
+            var currentFolderItem = CurrentFolderItem;
+
+            if (currentFolderItem == null)
+                return;
+            var index = FolderItems.IndexOf(currentFolderItem);
+            var newIndex = index + offset;
+            int direction = offset < 0 ? -1 : 1;
+
+            while (true)
+            {
+                if (newIndex < 0 || newIndex >= FolderItems.Count)
+                {
+                    newIndex = index;
+                    break;
+                }
+                if (!FolderItems[newIndex].Ignored)
+                    break;
+                newIndex += direction;
+            }
+            SetCurrentImage(newIndex);
+        }
     }
 }

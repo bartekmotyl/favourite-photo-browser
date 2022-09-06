@@ -1,21 +1,9 @@
-using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.Media.Imaging;
-using Avalonia.Threading;
-using MessageBox.Avalonia;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using TextCopy;
 using Avalonia;
-using System.Reactive.Subjects;
-using Avalonia.Platform.Storage;
+
 using Favourite_Photo_Browser.ViewModels;
 
 namespace Favourite_Photo_Browser
@@ -23,11 +11,6 @@ namespace Favourite_Photo_Browser
 
     public partial class MainWindow : Window
     {
-
-
-
-
-
         private MainWindowViewModel? ViewModel => (MainWindowViewModel?)DataContext;
 
         public MainWindow()
@@ -38,17 +21,40 @@ namespace Favourite_Photo_Browser
             
             zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
+
+            this.DataContextChanged += MainWindow_DataContextChanged;
+
+            
+        }
+
+        private void MainWindow_DataContextChanged(object? sender, EventArgs e)
+        {
+            if (ViewModel != null)
+                ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+        }
+
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CurrentFolderPath")
+            {
+                thumbnailsScrollViewer.Offset = Vector.Zero;
+            }
+            if (e.PropertyName=="TargetImage")
+            {
+                zoomBorderImage.ResetMatrix();
+                EnsureItemVisibleInScrollViewer();
+            }
         }
 
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Right)
             {
-                NavigateToImage(1);
+                ViewModel?.NavigateToImage(1);
             }
             else if (e.Key == Key.Left)
             {
-                NavigateToImage(-1);
+                ViewModel?.NavigateToImage(-1);
             }
 
             switch (e.Key)
@@ -64,21 +70,16 @@ namespace Favourite_Photo_Browser
 
         private void ZoomBorderImage_KeyDown(object? sender, KeyEventArgs e)
         {
-
         }
 
         private void OpenFolderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            OpenFolder();
+            ViewModel!.OpenFolder(StorageProvider);
         }
 
         private void CopyFavouritesPaths_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            var paths = ViewModel!.FolderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
-            if (paths == null)
-                return;
-            var text = string.Join(Environment.NewLine, paths);
-            ClipboardService.SetText(text);
+            ViewModel?.CopyFavouritePathsToClipboard();
         }
         
 
@@ -93,7 +94,7 @@ namespace Favourite_Photo_Browser
                 ViewModel!.CurrentFolderItem.IsActive = false;
             
             var index = ViewModel!.FolderItems.IndexOf(thumbnailData);
-            SetCurrentImage(index);
+            ViewModel!.SetCurrentImage(index);
           
         }
         private void OnThumbnailScrollViewPointerWheelChanged(object sender, PointerWheelEventArgs e) 
@@ -106,63 +107,14 @@ namespace Favourite_Photo_Browser
             ViewModel?.ToggleFavourite();
         }
 
-
-        private async void OpenFolder()
+        public void EnsureItemVisibleInScrollViewer()
         {
-            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
-            {
-                Title = "Select folder",
-                AllowMultiple = false,
-            });
-
-            if (folders.Count == 0)
+            var index = ViewModel!.CurrentFolderItemIndex;
+            if (index == null)
                 return;
 
-            var folder = folders.First() as IStorageFolder;
-            Uri? folderUri;
-            if (!folder.TryGetUri(out folderUri))
-                return;
-
-            ViewModel!.CurrentFolderPath = folderUri.AbsolutePath;
-
-            thumbnailsScrollViewer.Offset = Avalonia.Vector.Zero;
-            var viewModel = ViewModel!;
-
-            await Task.Run(async () =>
-            {
-                await viewModel.LoadFilesInFolder(folderUri.AbsolutePath);
-            });
-        }
-
-
-        private void NavigateToImage(int offset)
-        {
-            var currentFolderItem = ViewModel!.CurrentFolderItem;
-
-            if (currentFolderItem == null)
-                return;
-            var index = ViewModel!.FolderItems.IndexOf(currentFolderItem);
-            var newIndex = index + offset;
-            int direction = offset < 0 ? -1 : 1;
-
-            while (true)
-            {
-                if (newIndex < 0 || newIndex >= ViewModel!.FolderItems.Count)
-                {
-                    newIndex = index;
-                    break;
-                }
-                if (!ViewModel!.FolderItems[newIndex].Ignored)
-                    break;
-                newIndex += direction;
-            }
-            SetCurrentImage(newIndex);
-        }
-        private void EnsureItemVisibleInScrollViewer(int index)
-        {
             // TODO: fix the code below - it doesn't seem to work with Avalonia 11
-            /*
-            var control = thumbnailsItemRepeater.TryGetElement(0);
+            var control = thumbnailsItemRepeater.TryGetElement(index.Value);
             if (control != null)
             {
                 var scrollWindowWidth = thumbnailsScrollViewer.Bounds.Width;
@@ -175,37 +127,8 @@ namespace Favourite_Photo_Browser
                     thumbnailsScrollViewer.Offset = new Vector(control.Bounds.Left - scrollWindowWidth / 2, 0);
                 }
             }
-            */
         }
 
-        private void SetCurrentImage(int index)
-        {
 
-            if (ViewModel!.CurrentFolderItem != null)
-                ViewModel!.CurrentFolderItem.IsActive = false;
-
-            ViewModel!.CurrentFolderItem = ViewModel!.FolderItems[index];
-
-            var currentFolderItem = ViewModel!.CurrentFolderItem;
-            currentFolderItem.IsActive = true;
-
-            EnsureItemVisibleInScrollViewer(index);
-            
-            Task.Run(async () =>
-            {
-
-                var pathToLoad = currentFolderItem.Path;
-                var bitmap = new Bitmap(pathToLoad); // this takes time, especially on network drive 
-                // the if is here to ignore loaded image if we already requested another one 
-                if (pathToLoad == currentFolderItem.Path)
-                {
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        zoomBorderImage.ResetMatrix();
-                        targetImage.Source = bitmap;
-                    });
-                }
-            });
-        }
     }
 }
