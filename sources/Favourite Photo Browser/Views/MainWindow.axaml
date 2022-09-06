@@ -22,7 +22,7 @@
       <Border BorderBrush="Black" Background="#102A43" BorderThickness="0.5" Margin="5,0,5,5" Padding="5" CornerRadius="3" DockPanel.Dock="Bottom" MinHeight="25">
         <StackPanel Spacing="3" Orientation="Horizontal">
           <TextBlock Text="Current folder:" Foreground="#E2E0E1"></TextBlock>
-          <TextBlock Name="textCurrentFolderPath" Foreground="#E2E0E1"></TextBlock>
+          <TextBlock Name="textCurrentFolderPath" Text="{Binding CurrentFolderPath}" Foreground="#E2E0E1"></TextBlock>
         </StackPanel>
       </Border>
       <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
@@ -91,7 +91,7 @@
                           MinZoomX="1.0" MinZoomY="1.0">
             <Image Name="targetImage"/>
           </paz:ZoomBorder>
-          <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
+          <Image Source="{Binding CurrentFolderItem.FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
         </Grid>
       </Border>
     </DockPanel>
