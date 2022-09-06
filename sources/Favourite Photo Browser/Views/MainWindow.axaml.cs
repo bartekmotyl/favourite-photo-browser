@@ -16,15 +16,10 @@ namespace Favourite_Photo_Browser
         public MainWindow()
         {
             InitializeComponent();
-  
-            this.KeyDown += MainWindow_KeyDown;
-            
-            zoomBorderImage.KeyDown += ZoomBorderImage_KeyDown;
             WindowState = WindowState.Maximized;
 
-            this.DataContextChanged += MainWindow_DataContextChanged;
-
-            
+            KeyDown += MainWindow_KeyDown;
+            DataContextChanged += MainWindow_DataContextChanged;
         }
 
         private void MainWindow_DataContextChanged(object? sender, EventArgs e)
@@ -35,11 +30,11 @@ namespace Favourite_Photo_Browser
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "CurrentFolderPath")
+            if (e.PropertyName == nameof(MainWindowViewModel.CurrentFolderPath))
             {
                 thumbnailsScrollViewer.Offset = Vector.Zero;
             }
-            if (e.PropertyName=="TargetImage")
+            if (e.PropertyName== nameof(MainWindowViewModel.TargetImage))
             {
                 zoomBorderImage.ResetMatrix();
                 EnsureItemVisibleInScrollViewer();
@@ -66,10 +61,6 @@ namespace Favourite_Photo_Browser
                     ViewModel?.ToggleFavourite();
                     break;
             }
-        }
-
-        private void ZoomBorderImage_KeyDown(object? sender, KeyEventArgs e)
-        {
         }
 
         private void OpenFolderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -107,13 +98,13 @@ namespace Favourite_Photo_Browser
             ViewModel?.ToggleFavourite();
         }
 
-        public void EnsureItemVisibleInScrollViewer()
+        // TODO: fix the code below - it doesn't seem to work with Avalonia 11
+        private void EnsureItemVisibleInScrollViewer()
         {
             var index = ViewModel!.CurrentFolderItemIndex;
             if (index == null)
                 return;
 
-            // TODO: fix the code below - it doesn't seem to work with Avalonia 11
             var control = thumbnailsItemRepeater.TryGetElement(index.Value);
             if (control != null)
             {
