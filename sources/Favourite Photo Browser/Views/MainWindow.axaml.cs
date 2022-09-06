@@ -3,7 +3,6 @@ using Avalonia.Input;
 using System;
 using System.ComponentModel;
 using Avalonia;
-
 using Favourite_Photo_Browser.ViewModels;
 
 namespace Favourite_Photo_Browser
@@ -11,7 +10,7 @@ namespace Favourite_Photo_Browser
 
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel? ViewModel => (MainWindowViewModel?)DataContext;
+        private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext!;
 
         public MainWindow()
         {
@@ -41,15 +40,15 @@ namespace Favourite_Photo_Browser
             }
         }
 
-        private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+        private async void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             if (e.Key == Key.Right)
             {
-                ViewModel?.NavigateToImage(1);
+                await ViewModel.NavigateToImage(1);
             }
             else if (e.Key == Key.Left)
             {
-                ViewModel?.NavigateToImage(-1);
+                await ViewModel.NavigateToImage(-1);
             }
 
             switch (e.Key)
@@ -58,34 +57,29 @@ namespace Favourite_Photo_Browser
                     zoomBorderImage.ResetMatrix();
                     break;
                 case Key.F:
-                    ViewModel?.ToggleFavourite();
+                    await ViewModel.ToggleFavourite();
                     break;
             }
         }
 
-        private void OpenFolderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void OpenFolderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            ViewModel!.OpenFolder(StorageProvider);
+            await ViewModel.OpenFolder(StorageProvider);
         }
 
         private void CopyFavouritesPaths_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            ViewModel?.CopyFavouritePathsToClipboard();
+            ViewModel.CopyFavouritePathsToClipboard();
         }
-        
 
-        private void OnThumbnailImageClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void OnThumbnailImageClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            var thumbnailData = ((e.Source as Button)!.DataContext as FolderItemViewModel)!;
+            var folderItem = ((e.Source as Button)!.DataContext as FolderItemViewModel)!;
 
-            if (thumbnailData.Ignored)
+            if (folderItem.Ignored)
                 return;
 
-            if (ViewModel!.CurrentFolderItem != null)
-                ViewModel!.CurrentFolderItem.IsActive = false;
-            
-            var index = ViewModel!.FolderItems.IndexOf(thumbnailData);
-            ViewModel!.SetCurrentImage(index);
+            await ViewModel.ChangeCurrentFolderItem(folderItem);
           
         }
         private void OnThumbnailScrollViewPointerWheelChanged(object sender, PointerWheelEventArgs e) 
@@ -93,15 +87,15 @@ namespace Favourite_Photo_Browser
             thumbnailsScrollViewer.Offset = new Avalonia.Vector(thumbnailsScrollViewer.Offset.X - 
                 e.Delta.Y * thumbnailsScrollViewer.LargeChange.Width/2, 0);
         }
-        private void FavouriteToggle_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void FavouriteToggle_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            ViewModel?.ToggleFavourite();
+            await ViewModel.ToggleFavourite();
         }
 
         // TODO: fix the code below - it doesn't seem to work with Avalonia 11
         private void EnsureItemVisibleInScrollViewer()
         {
-            var index = ViewModel!.CurrentFolderItemIndex;
+            var index = ViewModel.CurrentFolderItemIndex;
             if (index == null)
                 return;
 

@@ -34,41 +34,31 @@ namespace Favourite_Photo_Browser.ViewModels
             this.dbConnector = new DBConnector(@"photos.db");
         }
 
-        public void ToggleFavourite()
+        
+        public async Task ToggleFavourite()
         {
             if (currentFolderItem == null)
                 return;
 
-            Task.Run(async () =>
-            {
-                var updated = await dbConnector.ToggleFavourite(currentFolderItem!.ImageId!.Value);
-                currentFolderItem.Favourite = updated;
-            });
+            var updated = await dbConnector.ToggleFavourite(currentFolderItem!.ImageId!.Value);
+            currentFolderItem.Favourite = updated;
         }
 
 
-        public async Task LoadFilesInFolder(string folderPath)
+        private async Task LoadFilesInFolder(string folderPath)
         {
 
             var directory = new DirectoryInfo(folderPath);
             var files = directory.GetFiles().OrderBy(f => f.CreationTimeUtc).ToList();
-
-
-
             var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(fileInfo.FullName, fileInfo.Name)).ToList();
 
+            FolderItems.Clear();
+            FolderItems.AddRange(allFolderItems);
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                FolderItems.Clear();
-                FolderItems.AddRange(allFolderItems);
-            });
-            this.thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
-
-
+            thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
 
             var fileNamesToProcess = allFolderItems.Where(fi => !fi.Ignored).Select(fi => fi.FileName).ToArray();
-            this.thumbnailsLoadingJob = new ThumnailsLoadingJob(folderPath, fileNamesToProcess);
+            thumbnailsLoadingJob = new ThumnailsLoadingJob(folderPath, fileNamesToProcess);
 
             var readThumnailsTask = dbConnector.ReadThumbnails(thumbnailsLoadingJob);
 
@@ -111,7 +101,7 @@ namespace Favourite_Photo_Browser.ViewModels
         }
 
 
-        public async void OpenFolder(IStorageProvider storageProvider)
+        public async Task OpenFolder(IStorageProvider storageProvider)
         {
             var folders = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
             {
@@ -128,10 +118,7 @@ namespace Favourite_Photo_Browser.ViewModels
 
             CurrentFolderPath = folderUri.AbsolutePath;
 
-            await Task.Run(async () =>
-            {
-                await LoadFilesInFolder(folderUri.AbsolutePath);
-            });
+            await LoadFilesInFolder(folderUri.AbsolutePath);
         }
 
         public void CopyFavouritePathsToClipboard()
@@ -144,42 +131,31 @@ namespace Favourite_Photo_Browser.ViewModels
         }
 
 
-        public void SetCurrentImage(int index)
+        public async Task ChangeCurrentFolderItem(FolderItemViewModel newCurrentItem)
         {
-
             if (CurrentFolderItem != null)
                 CurrentFolderItem.IsActive = false;
 
-            CurrentFolderItem = FolderItems[index];
-
+            CurrentFolderItem = newCurrentItem;
             CurrentFolderItem.IsActive = true;
 
-            //EnsureItemVisibleInScrollViewer(index);
-
-            Task.Run(async () =>
+            var pathToLoad = CurrentFolderItem.Path;
+            var bitmap = new Bitmap(pathToLoad); // this takes time, especially on network drive 
+            // the if is here to ignore loaded image if we already requested another one 
+            if (pathToLoad == CurrentFolderItem.Path)
             {
-
-                var pathToLoad = CurrentFolderItem.Path;
-                var bitmap = new Bitmap(pathToLoad); // this takes time, especially on network drive 
-                // the if is here to ignore loaded image if we already requested another one 
-                if (pathToLoad == CurrentFolderItem.Path)
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        
-                        TargetImage = bitmap;
-                    });
-                }
-            });
+                    TargetImage = bitmap;
+                });
+            }
         }
 
-        public void NavigateToImage(int offset)
+        public async Task NavigateToImage(int offset)
         {
-            var currentFolderItem = CurrentFolderItem;
-
-            if (currentFolderItem == null)
+            if (CurrentFolderItem == null)
                 return;
-            var index = FolderItems.IndexOf(currentFolderItem);
+            var index = FolderItems.IndexOf(CurrentFolderItem);
             var newIndex = index + offset;
             int direction = offset < 0 ? -1 : 1;
 
@@ -194,7 +170,7 @@ namespace Favourite_Photo_Browser.ViewModels
                     break;
                 newIndex += direction;
             }
-            SetCurrentImage(newIndex);
+            await ChangeCurrentFolderItem(FolderItems[newIndex]);
         }
     }
 }
