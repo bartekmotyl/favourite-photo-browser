@@ -26,12 +26,12 @@
         </StackPanel>
       </Border>
       <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
-        <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding FolderItems}" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
+        <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" PointerWheelChanged="ThumbnailScrollViewer_PointerWheelChanged">
+          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding FolderItems}">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
                 <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >
-                  <Button Click="OnThumbnailImageClick">
+                  <Button Click="ThumbnailImage_Click">
                     <StackPanel Spacing="5" Orientation="Vertical">
                       <Grid>
                         <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>

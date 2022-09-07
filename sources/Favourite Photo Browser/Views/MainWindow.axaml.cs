@@ -72,7 +72,7 @@ namespace Favourite_Photo_Browser
             ViewModel.CopyFavouritePathsToClipboard();
         }
 
-        private async void OnThumbnailImageClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void ThumbnailImage_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             var folderItem = ((e.Source as Button)!.DataContext as FolderItemViewModel)!;
 
@@ -82,7 +82,7 @@ namespace Favourite_Photo_Browser
             await ViewModel.ChangeCurrentFolderItem(folderItem);
           
         }
-        private void OnThumbnailScrollViewPointerWheelChanged(object sender, PointerWheelEventArgs e) 
+        private void ThumbnailScrollViewer_PointerWheelChanged(object sender, PointerWheelEventArgs e) 
         {
             thumbnailsScrollViewer.Offset = new Avalonia.Vector(thumbnailsScrollViewer.Offset.X - 
                 e.Delta.Y * thumbnailsScrollViewer.LargeChange.Width/2, 0);
