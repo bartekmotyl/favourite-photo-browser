@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Favourite_Photo_Browser.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:paz="clr-namespace:Avalonia.Controls.PanAndZoom;assembly=Avalonia.Controls.PanAndZoom"
@@ -11,23 +12,26 @@
         Background="#1D2025"
         FontFamily="/Assets/Lato-Regular.ttf"
         >
-
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+  
   <Panel>
 
     <DockPanel LastChildFill="True">
       <Border BorderBrush="Black" Background="#102A43" BorderThickness="0.5" Margin="5,0,5,5" Padding="5" CornerRadius="3" DockPanel.Dock="Bottom" MinHeight="25">
         <StackPanel Spacing="3" Orientation="Horizontal">
           <TextBlock Text="Current folder:" Foreground="#E2E0E1"></TextBlock>
-          <TextBlock Name="textCurrentFolderPath" Foreground="#E2E0E1"></TextBlock>
+          <TextBlock Name="textCurrentFolderPath" Text="{Binding CurrentFolderPath}" Foreground="#E2E0E1"></TextBlock>
         </StackPanel>
       </Border>
       <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
-        <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-          <ItemsRepeater Name="thumbnailsItemRepeater" PointerWheelChanged="OnThumbnailScrollViewPointerWheelChanged">
+        <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" PointerWheelChanged="ThumbnailScrollViewer_PointerWheelChanged">
+          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding FolderItems}">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
                 <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >
-                  <Button Click="OnThumbnailImageClick">
+                  <Button Click="ThumbnailImage_Click">
                     <StackPanel Spacing="5" Orientation="Vertical">
                       <Grid>
                         <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>
@@ -85,9 +89,9 @@
                                       Background="Transparent" ClipToBounds="True" Focusable="True"
                                       VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                           MinZoomX="1.0" MinZoomY="1.0">
-            <Image Name="targetImage"/>
+            <Image Source="{Binding TargetImage}"/>
           </paz:ZoomBorder>
-          <Image Name="iconCurrentImageFavourite" Source="{Binding FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
+          <Image Source="{Binding CurrentFolderItem.FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
         </Grid>
       </Border>
     </DockPanel>
