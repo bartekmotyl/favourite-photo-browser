@@ -19,7 +19,7 @@ namespace Favourite_Photo_Browser.ViewModels
         private ThumnailsLoadingJob? thumbnailsLoadingJob = null;
 
         private readonly AvaloniaList<FolderItemViewModel> folderItems = new();
-        private string currentFolderPath = "(not slected)";
+        private string currentFolderPath = "(not selected)";
         private FolderItemViewModel? currentFolderItem = null;
         private Bitmap? targetImage = null;
 
@@ -52,6 +52,8 @@ namespace Favourite_Photo_Browser.ViewModels
             var files = directory.GetFiles().OrderBy(f => f.CreationTimeUtc).ToList();
             var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(fileInfo.FullName, fileInfo.Name)).ToList();
 
+            CurrentFolderItem = null;
+            TargetImage = null;
             FolderItems.Clear();
             FolderItems.AddRange(allFolderItems);
 

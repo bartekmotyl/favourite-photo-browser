@@ -75,7 +75,8 @@
         <StackPanel Spacing="5" Orientation="Vertical" DockPanel.Dock="Top">
           <Button Name="toggleFavourite" Click="FavouriteToggle_Click" Background="Transparent"
                 Foreground="#DFE3E6"
-                HorizontalAlignment="Center">
+                HorizontalAlignment="Center"
+                IsEnabled="{Binding !!CurrentFolderItem}">
             <StackPanel>
               <i:Icon Value="mdi-heart"/>
               <TextBlock Text="Toggle"/>
