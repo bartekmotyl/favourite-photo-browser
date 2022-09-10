@@ -22,12 +22,24 @@ namespace Favourite_Photo_Browser.ViewModels
         private string currentFolderPath = "(not selected)";
         private FolderItemViewModel? currentFolderItem = null;
         private Bitmap? targetImage = null;
+        private int selectedSortOrderIndex = 0;
 
         public AvaloniaList<FolderItemViewModel> FolderItems => folderItems;
         public string CurrentFolderPath { get => currentFolderPath; set => this.RaiseAndSetIfChanged(ref currentFolderPath, value); }
         public FolderItemViewModel? CurrentFolderItem { get => currentFolderItem; set => this.RaiseAndSetIfChanged(ref currentFolderItem, value); }
         public Bitmap? TargetImage { get => targetImage; set => this.RaiseAndSetIfChanged(ref targetImage, value); }
         public int? CurrentFolderItemIndex => CurrentFolderItem == null ? null : folderItems.IndexOf(CurrentFolderItem);
+
+        public int SelectedSortOrderIndex
+        {
+            get => selectedSortOrderIndex; 
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedSortOrderIndex, value);
+                UpdateThumbnailsSorting();
+            }
+        }
+
 
         public MainWindowViewModel()
         {
@@ -44,18 +56,37 @@ namespace Favourite_Photo_Browser.ViewModels
             currentFolderItem.Favourite = updated;
         }
 
+        private void UpdateThumbnailsSorting()
+        {
+            IEnumerable<FolderItemViewModel> sorted;
+            if (SelectedSortOrderIndex == 0)
+                sorted = FolderItems.OrderBy(f => f.FileDate);
+            else if (SelectedSortOrderIndex == 1)
+                sorted = FolderItems.OrderByDescending(f => f.FileDate);
+            else if (SelectedSortOrderIndex == 2)
+                sorted = FolderItems.OrderBy(f => f.FileName);
+            else 
+                sorted = FolderItems.OrderByDescending(f => f.FileName);
+
+            var newItems = sorted.ToList();
+
+            FolderItems.Clear();
+            FolderItems.AddRange(newItems);
+        }
 
         private async Task LoadFilesInFolder(string folderPath)
         {
 
             var directory = new DirectoryInfo(folderPath);
-            var files = directory.GetFiles().OrderBy(f => f.CreationTimeUtc).ToList();
-            var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(fileInfo.FullName, fileInfo.Name)).ToList();
-
+            var files = directory.GetFiles().ToList();
+            var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(
+                fileInfo.FullName, fileInfo.Name, fileInfo.CreationTimeUtc)).ToList();
+            
             CurrentFolderItem = null;
             TargetImage = null;
             FolderItems.Clear();
             FolderItems.AddRange(allFolderItems);
+            UpdateThumbnailsSorting();
 
             thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
 

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
+using System;
 using System.Linq;
 
 namespace Favourite_Photo_Browser.ViewModels
@@ -9,10 +10,11 @@ namespace Favourite_Photo_Browser.ViewModels
     {
         private readonly string[] acceptedFileExtensions = new string[] { "jpg", "png", "tiff", "jpeg" /*, "arw"*/ };
 
-        public FolderItemViewModel(string path, string fileName)
+        public FolderItemViewModel(string path, string fileName, DateTime fileDate)
         {
             this.path = path;
             this.fileName = fileName;
+            this.fileDate = fileDate;
             title = fileName;
             ignored = acceptedFileExtensions.All(ext => !path.ToLower().EndsWith(ext));
             if (ignored)
@@ -25,6 +27,7 @@ namespace Favourite_Photo_Browser.ViewModels
 
         private string path;
         private readonly string fileName;
+        private readonly DateTime fileDate;
         private string title;
         private bool isLoaded;
         private Bitmap thumbnailImage = StaticImages.PhotoLoadingImage;
@@ -45,6 +48,7 @@ namespace Favourite_Photo_Browser.ViewModels
         public int? ImageId { get => imageId; set => this.RaiseAndSetIfChanged(ref imageId, value); }
         public bool Ignored => ignored;
         public string FileName => fileName;
+        public DateTime FileDate => fileDate;
 
         public bool IsActive
         {
