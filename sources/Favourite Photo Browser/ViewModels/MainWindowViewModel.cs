@@ -145,13 +145,13 @@ namespace Favourite_Photo_Browser.ViewModels
             if (folders.Count == 0)
                 return;
 
-            var folder = folders[0] as IStorageFolder;
+            var folder = folders[0];
             if (!folder.TryGetUri(out Uri? folderUri))
                 return;
 
-            CurrentFolderPath = folderUri.AbsolutePath;
+            CurrentFolderPath = Uri.UnescapeDataString(folderUri.AbsolutePath);
 
-            await LoadFilesInFolder(folderUri.AbsolutePath);
+            await LoadFilesInFolder(CurrentFolderPath);
         }
 
         public void CopyFavouritePathsToClipboard()
