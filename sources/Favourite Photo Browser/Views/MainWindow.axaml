@@ -27,7 +27,7 @@
       </Border>
       <Border Height="180"  DockPanel.Dock="Bottom" Background="#2E445B" Margin="5,0,5,5" BorderThickness="0.3" BorderBrush="#16232C" CornerRadius="3">
         <ScrollViewer Name="thumbnailsScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" PointerWheelChanged="ThumbnailScrollViewer_PointerWheelChanged">
-          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding FolderItems}">
+          <ItemsRepeater Name="thumbnailsItemRepeater" Items="{Binding VisibleFolderItems}">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
                 <Border Background="Transparent" BorderBrush="{Binding BorderBrush}" BorderThickness="3"  Margin="10" Cursor="Hand"  >
@@ -75,6 +75,14 @@
             <ComboBoxItem>Name ▲</ComboBoxItem>
             <ComboBoxItem>Name ▼</ComboBoxItem>
           </ComboBox>
+          <ToggleButton Name="showFavsOnly" Background="Transparent"
+              Foreground="#DFE3E6"
+              HorizontalAlignment="Center" IsChecked="{Binding ShowFavouritesOnly}">
+            <StackPanel>
+              <i:Icon Value="mdi-folder-heart"/>
+              <TextBlock Text="Show favs only"/>
+            </StackPanel>
+          </ToggleButton>
         </StackPanel>
       </Border>
       <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">

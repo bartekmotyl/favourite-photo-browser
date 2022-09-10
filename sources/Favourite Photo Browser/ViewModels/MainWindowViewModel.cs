@@ -16,19 +16,31 @@ namespace Favourite_Photo_Browser.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly DBConnector dbConnector;
+        private readonly AvaloniaList<FolderItemViewModel> visibleFolderItems = new();
         private ThumnailsLoadingJob? thumbnailsLoadingJob = null;
+        private IList<FolderItemViewModel> allFolderItems = new List<FolderItemViewModel>();
 
-        private readonly AvaloniaList<FolderItemViewModel> folderItems = new();
         private string currentFolderPath = "(not selected)";
         private FolderItemViewModel? currentFolderItem = null;
         private Bitmap? targetImage = null;
         private int selectedSortOrderIndex = 0;
+        private bool showFavouritesOnly = false;
 
-        public AvaloniaList<FolderItemViewModel> FolderItems => folderItems;
+        public AvaloniaList<FolderItemViewModel> VisibleFolderItems => visibleFolderItems;
+
         public string CurrentFolderPath { get => currentFolderPath; set => this.RaiseAndSetIfChanged(ref currentFolderPath, value); }
         public FolderItemViewModel? CurrentFolderItem { get => currentFolderItem; set => this.RaiseAndSetIfChanged(ref currentFolderItem, value); }
         public Bitmap? TargetImage { get => targetImage; set => this.RaiseAndSetIfChanged(ref targetImage, value); }
-        public int? CurrentFolderItemIndex => CurrentFolderItem == null ? null : folderItems.IndexOf(CurrentFolderItem);
+        public int? CurrentFolderItemIndex => CurrentFolderItem == null ? null : visibleFolderItems.IndexOf(CurrentFolderItem);
+        public bool ShowFavouritesOnly
+        {
+            get => showFavouritesOnly;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref showFavouritesOnly, value);
+                UpdateThumbnailsSorting();
+            }
+        }
 
         public int SelectedSortOrderIndex
         {
@@ -60,18 +72,19 @@ namespace Favourite_Photo_Browser.ViewModels
         {
             IEnumerable<FolderItemViewModel> sorted;
             if (SelectedSortOrderIndex == 0)
-                sorted = FolderItems.OrderBy(f => f.FileDate);
+                sorted = allFolderItems.OrderBy(f => f.FileDate);
             else if (SelectedSortOrderIndex == 1)
-                sorted = FolderItems.OrderByDescending(f => f.FileDate);
+                sorted = allFolderItems.OrderByDescending(f => f.FileDate);
             else if (SelectedSortOrderIndex == 2)
-                sorted = FolderItems.OrderBy(f => f.FileName);
+                sorted = allFolderItems.OrderBy(f => f.FileName);
             else 
-                sorted = FolderItems.OrderByDescending(f => f.FileName);
+                sorted = allFolderItems.OrderByDescending(f => f.FileName);
 
-            var newItems = sorted.ToList();
+            var newItems = sorted.Where(f => ShowFavouritesOnly ? (f.Favourite ?? 0) > 0 : true).ToList();
 
-            FolderItems.Clear();
-            FolderItems.AddRange(newItems);
+
+            VisibleFolderItems.Clear();
+            VisibleFolderItems.AddRange(newItems);
         }
 
         private async Task LoadFilesInFolder(string folderPath)
@@ -79,13 +92,11 @@ namespace Favourite_Photo_Browser.ViewModels
 
             var directory = new DirectoryInfo(folderPath);
             var files = directory.GetFiles().ToList();
-            var allFolderItems = files.Select(fileInfo => new FolderItemViewModel(
+            this.allFolderItems = files.Select(fileInfo => new FolderItemViewModel(
                 fileInfo.FullName, fileInfo.Name, fileInfo.CreationTimeUtc)).ToList();
             
             CurrentFolderItem = null;
             TargetImage = null;
-            FolderItems.Clear();
-            FolderItems.AddRange(allFolderItems);
             UpdateThumbnailsSorting();
 
             thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
@@ -102,7 +113,7 @@ namespace Favourite_Photo_Browser.ViewModels
                     if (thumbnailsLoadingJob.ProcessingProgress.TryDequeue(out var thumbnailLoadingStatus))
                     {
 
-                        var thumbnail = folderItems!.FirstOrDefault(t => t.Title == thumbnailLoadingStatus.FileName);
+                        var thumbnail = allFolderItems!.FirstOrDefault(t => t.Title == thumbnailLoadingStatus.FileName);
                         if (thumbnail != null)
                         {
                             var data = thumbnailLoadingStatus.LoadedThumbnail!.Data;
@@ -156,7 +167,7 @@ namespace Favourite_Photo_Browser.ViewModels
 
         public void CopyFavouritePathsToClipboard()
         {
-            var paths = FolderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
+            var paths = allFolderItems?.Where(fi => (fi.Favourite ?? 0) > 0).Select(fi => fi.Path).ToArray();
             if (paths == null)
                 return;
             var text = string.Join(Environment.NewLine, paths);
@@ -188,22 +199,22 @@ namespace Favourite_Photo_Browser.ViewModels
         {
             if (CurrentFolderItem == null)
                 return;
-            var index = FolderItems.IndexOf(CurrentFolderItem);
+            var index = VisibleFolderItems.IndexOf(CurrentFolderItem);
             var newIndex = index + offset;
             int direction = offset < 0 ? -1 : 1;
 
             while (true)
             {
-                if (newIndex < 0 || newIndex >= FolderItems.Count)
+                if (newIndex < 0 || newIndex >= VisibleFolderItems.Count)
                 {
                     newIndex = index;
                     break;
                 }
-                if (!FolderItems[newIndex].Ignored)
+                if (!VisibleFolderItems[newIndex].Ignored)
                     break;
                 newIndex += direction;
             }
-            await ChangeCurrentFolderItem(FolderItems[newIndex]);
+            await ChangeCurrentFolderItem(VisibleFolderItems[newIndex]);
         }
     }
 }
