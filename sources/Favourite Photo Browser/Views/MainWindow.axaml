@@ -3,7 +3,6 @@
         xmlns:vm="using:Favourite_Photo_Browser.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:paz="clr-namespace:Avalonia.Controls.PanAndZoom;assembly=Avalonia.Controls.PanAndZoom"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
@@ -107,13 +106,12 @@
         </StackPanel>
       </Border>      
       <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
-        <Grid>
-          <paz:ZoomBorder Name="zoomBorderImage" Stretch="None" ZoomSpeed="1.2"
-                                      Background="Transparent" ClipToBounds="True" Focusable="True"
-                                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                          MinZoomX="1.0" MinZoomY="1.0">
-            <Image Source="{Binding TargetImage}"/>
-          </paz:ZoomBorder>
+        <Grid ClipToBounds="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+          <Image Name="targetImage" Source="{Binding TargetImage}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                 PointerPressed="TargetImage_PointerPressed"  
+                 PointerReleased="TargetImage_PointerReleased"
+                 PointerMoved="TargetImage_PointerMoved"
+                 />
           <Image Source="{Binding CurrentFolderItem.FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
         </Grid>
       </Border>

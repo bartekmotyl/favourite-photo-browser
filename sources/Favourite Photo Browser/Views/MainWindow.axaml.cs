@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using Avalonia;
 using Favourite_Photo_Browser.ViewModels;
+using Avalonia.Media.Transformation;
 
 namespace Favourite_Photo_Browser
 {
@@ -11,6 +12,9 @@ namespace Favourite_Photo_Browser
     public partial class MainWindow : Window
     {
         private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext!;
+        private Point? targetImagePressedPoint = null;
+        private bool shiftPressed = false;
+        private bool controlPressed = false;
 
         public MainWindow()
         {
@@ -18,8 +22,10 @@ namespace Favourite_Photo_Browser
             WindowState = WindowState.Maximized;
 
             KeyDown += MainWindow_KeyDown;
+            KeyUp += MainWindow_KeyUp;
             DataContextChanged += MainWindow_DataContextChanged;
         }
+
 
         private void MainWindow_DataContextChanged(object? sender, EventArgs e)
         {
@@ -35,7 +41,6 @@ namespace Favourite_Photo_Browser
             }
             if (e.PropertyName== nameof(MainWindowViewModel.TargetImage))
             {
-                zoomBorderImage.ResetMatrix();
                 EnsureItemVisibleInScrollViewer();
             }
         }
@@ -53,13 +58,21 @@ namespace Favourite_Photo_Browser
 
             switch (e.Key)
             {
-                case Key.R:
-                    zoomBorderImage.ResetMatrix();
-                    break;
                 case Key.F:
                     await ViewModel.ToggleFavourite();
                     break;
             }
+
+            shiftPressed = ((e.KeyModifiers & KeyModifiers.Shift) == KeyModifiers.Shift);
+            controlPressed = ((e.KeyModifiers & KeyModifiers.Control) == KeyModifiers.Control);
+
+            UpdateTargetImageTransform();
+        }
+        private void MainWindow_KeyUp(object? sender, KeyEventArgs e)
+        {
+            shiftPressed = ((e.KeyModifiers & KeyModifiers.Shift) == KeyModifiers.Shift);
+            controlPressed = ((e.KeyModifiers & KeyModifiers.Control) == KeyModifiers.Control);
+            UpdateTargetImageTransform();
         }
 
         private async void OpenFolderButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -90,6 +103,37 @@ namespace Favourite_Photo_Browser
         private async void FavouriteToggle_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             await ViewModel.ToggleFavourite();
+        }
+
+        private void TargetImage_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            targetImagePressedPoint = e.GetCurrentPoint(targetImage).Position;
+            UpdateTargetImageTransform();
+        }
+        private void TargetImage_PointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            targetImagePressedPoint = null;
+            UpdateTargetImageTransform();
+        }
+        private void TargetImage_PointerMoved(object sender, PointerEventArgs e)
+        {
+            if (targetImagePressedPoint != null)
+                targetImagePressedPoint = e.GetCurrentPoint(targetImage).Position;
+            UpdateTargetImageTransform();
+        }
+        private void UpdateTargetImageTransform()
+        {
+            var desiredScale = 2.0;
+            desiredScale *= shiftPressed ? 2.0 : 1.0;
+            desiredScale *= controlPressed ? 3.0 : 1.0;
+
+            var scale = targetImagePressedPoint.HasValue ? desiredScale : 1.0;
+            var matrix = new Matrix(scale, 0.0, 0.0, scale, 0, 0);
+            var point = targetImagePressedPoint ?? new Point(0, 0);
+            targetImage.RenderTransformOrigin = new RelativePoint(point, RelativeUnit.Absolute);
+            var transformBuilder = new TransformOperations.Builder(1);
+            transformBuilder.AppendMatrix(matrix);
+            targetImage.RenderTransform = transformBuilder.Build();
         }
 
         // TODO: fix the code below - it doesn't seem to work with Avalonia 11
