@@ -80,9 +80,17 @@
               HorizontalAlignment="Center" IsChecked="{Binding ShowFavouritesOnly}">
             <StackPanel>
               <i:Icon Value="mdi-folder-heart"/>
-              <TextBlock Text="Show favs only"/>
+              <TextBlock Text="Favourites only"/>
             </StackPanel>
           </ToggleButton>
+          <ToggleButton Name="showSupportedOnly" Background="Transparent"
+              Foreground="#DFE3E6"
+              HorizontalAlignment="Center" IsChecked="{Binding ShowSupportedOnly}">
+            <StackPanel>
+              <i:Icon Value="mdi-camera"/>
+              <TextBlock Text="Supported only"/>
+            </StackPanel>
+          </ToggleButton>          
         </StackPanel>
       </Border>
       <Border DockPanel.Dock="Right"  Background="#102A43" Margin="0,5,5,5">

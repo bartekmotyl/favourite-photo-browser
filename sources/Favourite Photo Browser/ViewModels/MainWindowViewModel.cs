@@ -25,6 +25,7 @@ namespace Favourite_Photo_Browser.ViewModels
         private Bitmap? targetImage = null;
         private int selectedSortOrderIndex = 0;
         private bool showFavouritesOnly = false;
+        private bool showSupportedOnly = true;
 
         public AvaloniaList<FolderItemViewModel> VisibleFolderItems => visibleFolderItems;
 
@@ -41,6 +42,16 @@ namespace Favourite_Photo_Browser.ViewModels
                 UpdateThumbnailsSorting();
             }
         }
+        public bool ShowSupportedOnly
+        {
+            get => showSupportedOnly;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref showSupportedOnly, value);
+                UpdateThumbnailsSorting();
+            }
+        }
+        
 
         public int SelectedSortOrderIndex
         {
@@ -80,7 +91,10 @@ namespace Favourite_Photo_Browser.ViewModels
             else 
                 sorted = allFolderItems.OrderByDescending(f => f.FileName);
 
-            var newItems = sorted.Where(f => ShowFavouritesOnly ? (f.Favourite ?? 0) > 0 : true).ToList();
+            var newItems = sorted
+                .Where(f => !ShowFavouritesOnly || (f.Favourite ?? 0) > 0)
+                .Where(f => !ShowSupportedOnly || !f.Ignored)
+                .ToList();
 
 
             VisibleFolderItems.Clear();
