@@ -16,6 +16,16 @@ There are already some tools that make the first point possible, but I haven't f
 This program uses a local database (`photos.db`), located in root program directory) to store thumbnails of browsed photos (to improve browsing experience next time you visit the same folder). When browsing, photo can be marked as favourite (use `F` key) and this information is stored in local database along with the thumbnail. 
 Finally, it is possible to export (copy to clipboard) paths of all photos marked as favourite in currently opened folder.     
 
+# Typical workflow 
+- open folder 
+- thumbnails are being loaded; feel free to start looking at the file that were already processed - loading happens in background anyway
+- select a pictue (click or use left/righ arrows)
+- if you like to mark it as favourite, click `F` or click a button; icon will appear 
+- you can always change your mind and remove favourite marking 
+- whenr you are done, click `copy paths` and paths of all files marked as favourite in current folder will be copied to clipboard
+
+Note: thumbnials and favourite markings arte stored in DB, so no worry - next time you start the progeam and open the same folder, they will be already there.  
+
 # Implementation 
 
 Program is implemented in C# / .Net 6 with UI implemnted in [Avalonia](https://avaloniaui.net/). This means it should work on many platforms, including: 
@@ -25,7 +35,6 @@ Program is implemented in C# / .Net 6 with UI implemnted in [Avalonia](https://a
 
 So far I have only tested Windows, looking for feedback of testing it on other platforms. 
 
-Ah, and btw. - the code is (currently) very ugly ;-) I had completely no experience with Avalonia before starting this project, so probably experienced Avalonia developers would cry reading this code... (any comments or improvement ideas very much welcome though) 
 
 # Release
 
