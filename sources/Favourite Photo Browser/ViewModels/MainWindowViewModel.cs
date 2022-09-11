@@ -79,17 +79,21 @@ namespace Favourite_Photo_Browser.ViewModels
             currentFolderItem.Favourite = updated;
         }
 
+        private IEnumerable<FolderItemViewModel> SortFolderItems(IEnumerable<FolderItemViewModel> folderItems)
+        {
+            if (SelectedSortOrderIndex == 0)
+                return folderItems.OrderBy(f => f.FileDate);
+            else if (SelectedSortOrderIndex == 1)
+                return folderItems.OrderByDescending(f => f.FileDate);
+            else if (SelectedSortOrderIndex == 2)
+                return folderItems.OrderBy(f => f.FileName);
+            else
+                return folderItems.OrderByDescending(f => f.FileName);
+        }
+
         private void UpdateThumbnailsSorting()
         {
-            IEnumerable<FolderItemViewModel> sorted;
-            if (SelectedSortOrderIndex == 0)
-                sorted = allFolderItems.OrderBy(f => f.FileDate);
-            else if (SelectedSortOrderIndex == 1)
-                sorted = allFolderItems.OrderByDescending(f => f.FileDate);
-            else if (SelectedSortOrderIndex == 2)
-                sorted = allFolderItems.OrderBy(f => f.FileName);
-            else 
-                sorted = allFolderItems.OrderByDescending(f => f.FileName);
+            IEnumerable<FolderItemViewModel> sorted = SortFolderItems(allFolderItems);
 
             var newItems = sorted
                 .Where(f => !ShowFavouritesOnly || (f.Favourite ?? 0) > 0)
@@ -115,7 +119,7 @@ namespace Favourite_Photo_Browser.ViewModels
 
             thumbnailsLoadingJob?.CancellationTokenSource.Cancel();
 
-            var fileNamesToProcess = allFolderItems.Where(fi => !fi.Ignored).Select(fi => fi.FileName).ToArray();
+            var fileNamesToProcess = SortFolderItems(allFolderItems.Where(fi => !fi.Ignored)).Select(fi => fi.FileName).ToArray();
             thumbnailsLoadingJob = new ThumnailsLoadingJob(folderPath, fileNamesToProcess);
 
             var readThumnailsTask = dbConnector.ReadThumbnails(thumbnailsLoadingJob);
