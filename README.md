@@ -60,13 +60,13 @@ dontnet build
 ```
 
 # Future ideas
-- better UI
-- quick zoom 
-- improved scrolling of thumbnails list 
-- change order of files on the list (currently by file date) - name, file date, date taken, ascending/descending, maybe even shuffle 
+- ~~better UI~~ :white_check_mark: done
+- ~~quick zoom~~ :white_check_mark: done 
+- ~~improved scrolling of thumbnails list~~ :white_check_mark: done
+- ~~change order of files on the list (currently by file date) - name, file date, date taken, ascending/descending, maybe even shuffle~~ :white_check_mark: done 
 - pre-caching of images in selected folders (to make browsing even more efficient later)
-- selecting folder from folder tree 
-- toggle showing only favourite images (in currernt folder) 
+- ~~selecting folder from folder tree~~ - skipped for now  
+- ~~toggle showing only favourite images (in currernt folder)~~ :white_check_mark: done 
 - more export options (e.g. copy favourite images to a target folder) 
 - ... more ideas welcome 
 
