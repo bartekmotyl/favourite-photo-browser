@@ -20,6 +20,7 @@ Finally, it is possible to export (copy to clipboard) paths of all photos marked
 - open folder 
 - thumbnails are being loaded; feel free to start looking at the file that were already processed - loading happens in background anyway
 - select a pictue (click or use left/righ arrows)
+- selected picture (full version) is loaded and shown in main panel; click anywhere to quickly zoom (use `Shift` or `Control` for different zoom levels, even combined) 
 - if you like to mark it as favourite, click `F` or click a button; icon will appear 
 - you can always change your mind and remove favourite marking 
 - whenr you are done, click `copy paths` and paths of all files marked as favourite in current folder will be copied to clipboard
