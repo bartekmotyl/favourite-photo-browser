@@ -70,6 +70,7 @@ dontnet build
 - ~~selecting folder from folder tree~~ - skipped for now  
 - ~~toggle showing only favourite images (in currernt folder)~~ :white_check_mark: done 
 - more export options (e.g. copy favourite images to a target folder) 
+- plugins that show additional image information (EXIF, histogram, GPS location etc.)  
 - ... more ideas welcome 
 
 # Contribution 
