@@ -199,7 +199,7 @@ namespace Favourite_Photo_Browser
         }
 
 
-        public async Task<int?> ToggleFavourite(int imageId)
+        public async Task<int?> ToggleFavourite(int imageId, int favouriteMask)
         {
             try
             {
@@ -210,7 +210,14 @@ namespace Favourite_Photo_Browser
                 if (image == null)
                     return null;
 
-                image.Favourite = image.Favourite == 0 ? 1 : 0;
+                if ((image.Favourite & favouriteMask) == 0)
+                {
+                    image.Favourite = (image.Favourite | favouriteMask);
+                }
+                else
+                {
+                    image.Favourite = (image.Favourite & (~favouriteMask));
+                }
                 await connection.UpdateAsync(image);
                 return image.Favourite;
             }

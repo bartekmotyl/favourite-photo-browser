@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using Favourite_Photo_Browser.Converters;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using TextCopy;
 
 namespace Favourite_Photo_Browser.ViewModels
 {
+
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly DBConnector dbConnector;
@@ -26,6 +28,9 @@ namespace Favourite_Photo_Browser.ViewModels
         private int selectedSortOrderIndex = 0;
         private bool showFavouritesOnly = false;
         private bool showSupportedOnly = true;
+        private int selectedFavouriteTypeMask = 1;
+        private int selectedFavouriteTypeIndex = 0;
+
 
         public AvaloniaList<FolderItemViewModel> VisibleFolderItems => visibleFolderItems;
 
@@ -51,11 +56,11 @@ namespace Favourite_Photo_Browser.ViewModels
                 UpdateThumbnailsSorting();
             }
         }
-        
+
 
         public int SelectedSortOrderIndex
         {
-            get => selectedSortOrderIndex; 
+            get => selectedSortOrderIndex;
             set
             {
                 this.RaiseAndSetIfChanged(ref selectedSortOrderIndex, value);
@@ -63,19 +68,37 @@ namespace Favourite_Photo_Browser.ViewModels
             }
         }
 
+        public int SelectedFavouriteTypeMask 
+        {
+            get => selectedFavouriteTypeMask;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedFavouriteTypeMask, value);
+            }
+        }
+            
+
+        public int SelectedFavouriteTypeIndex
+        {
+            get => selectedFavouriteTypeIndex;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedFavouriteTypeIndex, value);
+                SelectedFavouriteTypeMask = (1 << selectedFavouriteTypeIndex);
+            }
+        }
 
         public MainWindowViewModel()
         {
             this.dbConnector = new DBConnector(@"photos.db");
         }
 
-        
         public async Task ToggleFavourite()
         {
             if (currentFolderItem == null)
                 return;
 
-            var updated = await dbConnector.ToggleFavourite(currentFolderItem!.ImageId!.Value);
+            var updated = await dbConnector.ToggleFavourite(currentFolderItem!.ImageId!.Value, SelectedFavouriteTypeMask);
             currentFolderItem.Favourite = updated;
         }
 
@@ -96,7 +119,7 @@ namespace Favourite_Photo_Browser.ViewModels
             IEnumerable<FolderItemViewModel> sorted = SortFolderItems(allFolderItems);
 
             var newItems = sorted
-                .Where(f => !ShowFavouritesOnly || (f.Favourite ?? 0) > 0)
+                .Where(f => !ShowFavouritesOnly || ((f.Favourite ?? 0) & SelectedFavouriteTypeMask) > 0)
                 .Where(f => !ShowSupportedOnly || !f.Ignored)
                 .ToList();
 

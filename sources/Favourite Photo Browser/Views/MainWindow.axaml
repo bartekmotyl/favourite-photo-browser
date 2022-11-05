@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:converters="using:Favourite_Photo_Browser.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Favourite_Photo_Browser.MainWindow"
         Icon="/Assets/favourite-photo-browser-icon.png"
@@ -14,6 +15,11 @@
   <Design.DataContext>
     <vm:MainWindowViewModel/>
   </Design.DataContext>
+
+  <Window.Resources>
+    <converters:FolderItemFavIconConverter x:Key="FolderItemFavIconConverter" />
+    <x:Int32 x:Key="FolderItemFavIconConverterParameter">1</x:Int32>
+  </Window.Resources>
   
   <Panel>
 
@@ -34,7 +40,14 @@
                     <StackPanel Spacing="5" Orientation="Vertical">
                       <Grid>
                         <Image Source="{Binding ThumbnailImage}"  Width="160" Height="120"/>
-                        <Image HorizontalAlignment="Right" VerticalAlignment="Top" Source="{Binding FavouriteIcon}"  Width="32" Height="32" />
+                        <Image HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32">
+                          <Image.Source>
+                            <MultiBinding Converter="{StaticResource FolderItemFavIconConverter}">
+                              <Binding Path="DataContext.Favourite" RelativeSource="{RelativeSource Self}"/>
+                              <Binding Path="DataContext.SelectedFavouriteTypeMask"  RelativeSource="{RelativeSource AncestorType=Window}" />
+                            </MultiBinding>
+                          </Image.Source>
+                        </Image>
                       </Grid>
                       <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Title}" Foreground="Black"></TextBlock>
@@ -74,6 +87,14 @@
             <ComboBoxItem>Name ▲</ComboBoxItem>
             <ComboBoxItem>Name ▼</ComboBoxItem>
           </ComboBox>
+          <ComboBox SelectedIndex="{Binding SelectedFavouriteTypeIndex}">
+            <ComboBoxItem>Favourite</ComboBoxItem>
+            <ComboBoxItem>Selection 1</ComboBoxItem>
+            <ComboBoxItem>Selection 2</ComboBoxItem>
+            <ComboBoxItem>Selection 3</ComboBoxItem>
+            <ComboBoxItem>Selection 4</ComboBoxItem>
+            <ComboBoxItem>Selection 5</ComboBoxItem>
+          </ComboBox>
           <ToggleButton Name="showFavsOnly" Background="Transparent"
               Foreground="#DFE3E6"
               HorizontalAlignment="Center" IsChecked="{Binding ShowFavouritesOnly}">
@@ -107,12 +128,19 @@
       </Border>      
       <Border Background="#121212" Margin="0,5,5,5" Padding="5"  CornerRadius="3" BorderBrush="#566F52" BorderThickness="0.5">
         <Grid ClipToBounds="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-          <Image Name="targetImage" Source="{Binding TargetImage}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-                 PointerPressed="TargetImage_PointerPressed"  
+          <Image Name="targetImage" Source="{Binding TargetImage}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 PointerPressed="TargetImage_PointerPressed"
                  PointerReleased="TargetImage_PointerReleased"
                  PointerMoved="TargetImage_PointerMoved"
                  />
-          <Image Source="{Binding CurrentFolderItem.FavouriteIcon}" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32" />
+          <Image HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="32">
+            <Image.Source>
+              <MultiBinding Converter="{StaticResource FolderItemFavIconConverter}">
+                <Binding Path="CurrentFolderItem.Favourite"/>
+                <Binding Path="DataContext.SelectedFavouriteTypeMask"  RelativeSource="{RelativeSource AncestorType=Window}" />
+              </MultiBinding>
+            </Image.Source>
+          </Image>
         </Grid>
       </Border>
     </DockPanel>

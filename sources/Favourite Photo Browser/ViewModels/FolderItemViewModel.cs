@@ -21,7 +21,6 @@ namespace Favourite_Photo_Browser.ViewModels
             {
                 thumbnailImage = StaticImages.UnknownFormat;
                 favourite = 0;
-                favouriteIcon = null;
             }
         }
 
@@ -31,7 +30,6 @@ namespace Favourite_Photo_Browser.ViewModels
         private string title;
         private bool isLoaded;
         private Bitmap thumbnailImage = StaticImages.PhotoLoadingImage;
-        private Bitmap? favouriteIcon = StaticImages.IconFavouriteUnknown;
         private bool isActive;
         public IBrush borderBrush = Brushes.Transparent;
         private int? imageId;
@@ -43,7 +41,6 @@ namespace Favourite_Photo_Browser.ViewModels
         public string Title { get => title; set => this.RaiseAndSetIfChanged(ref title, value); }
         public bool IsLoaded { get => isLoaded; set => this.RaiseAndSetIfChanged(ref isLoaded, value); }
         public Bitmap ThumbnailImage { get => thumbnailImage; set => this.RaiseAndSetIfChanged(ref thumbnailImage, value); }
-        public Bitmap? FavouriteIcon { get => favouriteIcon; set => this.RaiseAndSetIfChanged(ref favouriteIcon, value); }
         public IBrush BorderBrush { get => borderBrush; set => this.RaiseAndSetIfChanged(ref borderBrush, value); }
         public int? ImageId { get => imageId; set => this.RaiseAndSetIfChanged(ref imageId, value); }
         public bool Ignored => ignored;
@@ -59,21 +56,21 @@ namespace Favourite_Photo_Browser.ViewModels
                 BorderBrush = value ? Brushes.Tomato : Brushes.Transparent;
             }
         }
+        public static bool? MatchesFavourite(int? favourite, int mask)
+        {
+            if (favourite == null)
+                return null;
+            
+            return (favourite & mask) > 0;
 
+        }
         public int? Favourite
         {
             get => favourite;
             set
             {
                 this.RaiseAndSetIfChanged(ref favourite, value);
-                if (value == null)
-                {
-                    FavouriteIcon = StaticImages.IconFavouriteUnknown;
-                }
-                else
-                {
-                    FavouriteIcon = value == 0 ? null : StaticImages.IconFavouriteOn;
-                }
+                this.RaisePropertyChanged("FavouriteIcon");
             }
         }
     }
